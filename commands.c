@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <linux/limits.h>
 
 void runcmd(const char *input) {  // runs what the command is
 		if(strcmp(input, "wfile") == 0) { // write to a file
@@ -55,9 +57,30 @@ void runcmd(const char *input) {  // runs what the command is
 
                 }
 
-		if(strcmp(input, "q") == 0) {  // exits the program
+		if(strcmp(input, "q") == 0) {  // exits the program (and clears the screen)
+			system("clear");
 			exit(EXIT_SUCCESS);
 		}
 
 		// TODO: add rfile (read file) and help command
+}
+
+void pwd(void) { // prints the current working directory
+	char cwd[PATH_MAX];
+	if(getcwd(cwd, sizeof(cwd)) != NULL) {
+		printf("cwd: %s\n", cwd);
+	}
+	else {
+		printf("error getting cwd :(\n");
+	}
+}
+
+const char* pwd(void) { // returns the current working directory
+        char cwd[PATH_MAX];
+        if(getcwd(cwd, sizeof(cwd)) != NULL) {
+                return cwd;
+        }
+        else {
+                return NULL; // for error
+        }
 }
