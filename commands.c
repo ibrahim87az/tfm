@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <linux/limits.h>
+#include <dirent.h>
 
 void runcmd(const char *input) {  // runs what the command is
 		if(strcmp(input, "wfile") == 0) { // write to a file
@@ -75,12 +76,28 @@ void pwd(void) { // prints the current working directory
 	}
 }
 
-const char* pwd(void) { // returns the current working directory
-        char cwd[PATH_MAX];
+const char *cwd(void) { // returns the current working directory
+        static char cwd[PATH_MAX];
         if(getcwd(cwd, sizeof(cwd)) != NULL) {
                 return cwd;
         }
         else {
-                return NULL; // for error
+                return NULL; // for failure
         }
+}
+
+void ls(void) {
+	struct dirent *de = NULL; // directory entry
+	DIR *dr = opendir(".");
+
+	if(dr == NULL) {
+		printf("error opening cwd :(\n");
+		return ;
+	}
+
+	while((de = readdir(dr)) != NULL) {
+		printf("%s\t", de->d_name); // prints the insides of the cwd
+	}
+
+	closedir(dr);
 }
